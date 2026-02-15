@@ -1,108 +1,86 @@
 # Growth Estate CRM - TODO
 
-## Fase 1: Autenticación y Gestión de Workspaces
-- [x] Configurar autenticación con Google (ya incluida en template)
-- [x] Crear tabla de workspaces (clientes) en la base de datos
-- [x] Crear tabla de workspace_members con roles (Admin, Editor, Viewer)
-- [x] Implementar CRUD de workspaces
-- [x] Crear selector de workspace en la interfaz
-- [ ] Implementar sistema de invitaciones a workspaces
+## Fase 1: Configuración Inicial
+- [x] Crear esquema de base de datos
+- [x] Configurar tablas de usuarios, workspaces, miembros
+- [x] Configurar tablas de email accounts
+- [x] Configurar tablas de knowledge base
+- [x] Configurar tablas de campaigns y emails
+- [x] Configurar tablas de scheduled emails y metrics
 
-## Fase 2: Conexión de Cuentas de Email
-- [x] Crear tabla de email_accounts para almacenar credenciales SMTP/IMAP
-- [x] Implementar formulario de conexión de cuenta de email (API)
-- [x] Validar credenciales SMTP/IMAP al conectar
-- [x] Soportar Gmail, Outlook, Yahoo con configuración automática
-- [x] Encriptar credenciales antes de almacenar en base de datos
-- [ ] Crear interfaz de conexión de email en frontend
-- [ ] Mostrar estado de conexión de cuenta de email por workspace
+## Fase 2: Autenticación y Gestión de Workspaces
+- [x] Implementar autenticación con Google (Manus OAuth)
+- [x] Sistema de permisos (Admin, Editor, Viewer)
+- [x] CRUD de workspaces
+- [x] Gestión de miembros de workspace
 
-## Fase 3: Base de Conocimiento por Cliente
-- [x] Crear tabla de knowledge_base vinculada a workspaces
-- [x] Crear tabla de knowledge_base_files para archivos en S3
-- [x] Implementar API para agregar información del cliente
-- [x] Campos: tono de voz, productos/servicios, contexto del negocio, objetivos
-- [x] Integrar almacenamiento S3 para archivos adjuntos
-- [x] Permitir subir documentos de referencia (API)
-- [ ] Crear interfaz de edición de base de conocimiento
+## Fase 3: Conexión de Cuentas de Email
+- [x] Módulo de encriptación AES-256-GCM
+- [x] Validación SMTP/IMAP
+- [x] Soporte para Gmail, Outlook, Yahoo
+- [x] Soporte para servidores personalizados
+- [x] API de email accounts
 
-## Fase 4: Generación de Campañas con IA
-- [x] Crear tabla de campaigns vinculada a workspaces
-- [x] Crear tabla de emails vinculada a campaigns (1 campaña = 10 emails)
-- [x] Implementar integración con LLM para generar emails
-- [x] Crear prompt engineering para generación de secuencias de 10 emails
-- [x] Usar base de conocimiento del cliente en el prompt
-- [x] Generar asuntos, cuerpos y CTAs personalizados
-- [x] Permitir regenerar emails individuales
-- [x] Guardar borradores de emails generados
-- [x] Crear interfaz para crear campañas
+## Fase 4: Base de Conocimiento
+- [x] CRUD de knowledge base
+- [x] Integración con S3 para archivos
+- [x] API de knowledge base files
 
-## Fase 5: Editor de Emails con Vista en Fila
-- [x] Crear componente de editor de emails
-- [x] Mostrar los 10 emails de la campaña en vista de secuencia/fila
-- [x] Permitir editar cada email individualmente (UI básica)
-- [x] Implementar preview de email en formato HTML
-- [ ] Agregar editor rich text para personalización
-- [x] Mostrar orden de envío (Email 1, 2, 3... 10)
-- [ ] Permitir reordenar emails en la secuencia
+## Fase 5: Generación de Campañas con IA
+- [x] Módulo de generación de emails con LLM
+- [x] Prompt engineering para 10 emails
+- [x] API de campaigns
+- [x] API de emails
+- [x] Regeneración individual de emails
 
-## Fase 6: Programación y Envío Automático
-- [x] Crear tabla de scheduled_emails para tracking de envíos
-- [x] Implementar configuración de intervalos de envío (default: 3 días)
-- [ ] Crear job/worker para envío automático de emails
-- [ ] Usar credenciales SMTP del cliente para enviar
-- [ ] Implementar sistema de colas para envíos
-- [ ] Manejar errores de envío y reintentos
-- [ ] Registrar logs de envíos exitosos y fallidos
-- [x] Permitir pausar/reanudar campañas (UI)
+## Fase 6: Frontend - Dashboard y Workspaces
+- [x] Diseño con paleta púrpura moderna
+- [x] Contexto de workspace
+- [x] Dashboard principal
+- [x] Página de nuevo workspace
+- [x] Página de workspace individual con tabs
 
-## Fase 7: Tracking de Métricas
-- [x] Crear tabla de email_metrics para almacenar estadísticas
-- [ ] Implementar tracking de aperturas (pixel de seguimiento)
-- [ ] Implementar tracking de clics (enlaces con redirect)
-- [ ] Registrar conversiones (si aplica)
-- [ ] Calcular tasa de apertura por email y campaña
-- [ ] Calcular tasa de clics por email y campaña
-- [ ] Calcular engagement general
+## Fase 7: Frontend - Campañas
+- [x] Página de nueva campaña con generación IA
+- [x] Vista en fila de 10 emails
+- [x] Preview HTML de emails
+- [x] Editor de emails
 
-## Fase 8: Dashboard de Métricas por Cliente
-- [ ] Crear página de dashboard por workspace
-- [ ] Mostrar métricas de campañas activas
-- [ ] Gráficos de tasa de apertura y clics
-- [ ] Lista de emails enviados con estado
-- [ ] Filtros por campaña y rango de fechas
-- [ ] Exportar reportes a CSV
+## Fase 8: Testing
+- [x] Tests de autenticación
+- [x] Tests de workspaces
 
-## Fase 9: Vista de Administración Multicliente
-- [x] Crear dashboard principal con resumen de todos los workspaces
-- [ ] Mostrar campañas activas de todos los clientes
-- [ ] Métricas agregadas (total de emails enviados, tasa de apertura promedio)
-- [ ] Vista de tabla con todos los workspaces y sus métricas
-- [x] Permitir cambiar rápidamente entre workspaces
-- [ ] Alertas de campañas con bajo rendimiento
+## Fase 9: Envío Automático y Métricas
+- [ ] Worker para envío programado
+- [ ] Sistema de colas
+- [ ] Tracking de aperturas
+- [ ] Tracking de clics
+- [ ] Tracking de conversiones
+- [ ] Dashboard de métricas
 
-## Fase 10: Sistema de Notificaciones
-- [x] Crear tabla de activity_logs para auditoría
-- [ ] Implementar notificaciones automáticas al administrador
-- [ ] Notificar cuando una campaña alcanza hitos importantes
-- [ ] Notificar cuando hay problemas de entrega
-- [ ] Notificar cuando la tasa de apertura es baja
-- [ ] Notificar cuando hay conversiones altas
-- [ ] Usar sistema de notificaciones de Manus (notifyOwner)
+## Fase 10: Notificaciones
+- [ ] Notificaciones al administrador
+- [ ] Alertas de problemas de entrega
+- [ ] Alertas de hitos importantes
 
-## Fase 11: Diseño y UX
-- [x] Definir paleta de colores y tipografía
-- [x] Crear layout principal con sidebar
-- [x] Diseñar componentes reutilizables
-- [x] Implementar diseño responsive
-- [x] Agregar estados de carga y errores
-- [x] Mejorar UX de formularios
-- [ ] Agregar animaciones y transiciones
+## Fase 11: Interfaz de Base de Conocimiento
+- [ ] Formulario de base de conocimiento
+- [ ] Subida de archivos
+- [ ] Vista de archivos adjuntos
 
-## Fase 12: Pruebas y Optimización
-- [ ] Escribir tests para procedimientos críticos
-- [ ] Probar flujo completo de generación y envío de campaña
-- [ ] Optimizar consultas de base de datos
-- [ ] Implementar caché donde sea necesario
-- [ ] Validar seguridad de credenciales SMTP
-- [ ] Revisar manejo de errores
+## Fase 12: Interfaz de Conexión de Email
+- [ ] Formulario de conexión SMTP
+- [ ] Selector de proveedores
+- [ ] Validación en tiempo real
+
+## Fase 13: Optimización para Despliegue en Vercel, Render y Supabase
+- [x] Migrar esquema de base de datos de MySQL a PostgreSQL (Supabase)
+- [x] Actualizar conexiones de base de datos para usar Supabase
+- [x] Crear archivo vercel.json para configuración de Vercel
+- [x] Configurar variables de entorno para Vercel
+- [x] Crear Dockerfile para backend en Render
+- [x] Configurar render.yaml para despliegue automático
+- [x] Separar frontend y backend en builds independientes
+- [x] Actualizar README con instrucciones de despliegue
+- [x] Crear DEPLOYMENT.md con guía completa
+- [x] Exportar código a GitHub

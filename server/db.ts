@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { 
   InsertUser, 
   users,
@@ -26,7 +27,8 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const client = postgres(process.env.DATABASE_URL);
+      _db = drizzle(client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -85,7 +87,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -111,8 +114,8 @@ export async function createWorkspace(workspace: InsertWorkspace) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(workspaces).values(workspace);
-  return result[0].insertId;
+  const result = await db.insert(workspaces).values(workspace).returning({ id: workspaces.id });
+  return result[0].id;
 }
 
 export async function getWorkspacesByUser(userId: number) {
@@ -146,7 +149,8 @@ export async function addWorkspaceMember(member: InsertWorkspaceMember) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  await db.insert(workspaceMembers).values(member);
+  const result = await db.insert(workspaceMembers).values(member).returning({ id: workspaceMembers.id });
+  return result[0].id;
 }
 
 export async function getWorkspaceMembers(workspaceId: number) {
@@ -191,8 +195,8 @@ export async function createEmailAccount(account: InsertEmailAccount) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(emailAccounts).values(account);
-  return result[0].insertId;
+  const result = await db.insert(emailAccounts).values(account).returning({ id: emailAccounts.id });
+  return result[0].id;
 }
 
 export async function getEmailAccountsByWorkspace(workspaceId: number) {
@@ -220,7 +224,7 @@ export async function getEmailAccountById(accountId: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-export async function updateEmailAccountStatus(accountId: number, isActive: number, lastVerified?: Date) {
+export async function updateEmailAccountStatus(accountId: number, isActive: boolean, lastVerified?: Date) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
@@ -235,8 +239,8 @@ export async function createKnowledgeBase(kb: InsertKnowledgeBase) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(knowledgeBase).values(kb);
-  return result[0].insertId;
+  const result = await db.insert(knowledgeBase).values(kb).returning({ id: knowledgeBase.id });
+  return result[0].id;
 }
 
 export async function getKnowledgeBaseByWorkspace(workspaceId: number) {
@@ -266,8 +270,8 @@ export async function addKnowledgeBaseFile(file: InsertKnowledgeBaseFile) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(knowledgeBaseFiles).values(file);
-  return result[0].insertId;
+  const result = await db.insert(knowledgeBaseFiles).values(file).returning({ id: knowledgeBaseFiles.id });
+  return result[0].id;
 }
 
 export async function getKnowledgeBaseFiles(knowledgeBaseId: number) {
@@ -296,8 +300,8 @@ export async function createCampaign(campaign: InsertCampaign) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(campaigns).values(campaign);
-  return result[0].insertId;
+  const result = await db.insert(campaigns).values(campaign).returning({ id: campaigns.id });
+  return result[0].id;
 }
 
 export async function getCampaignsByWorkspace(workspaceId: number) {
@@ -341,8 +345,8 @@ export async function createEmail(email: InsertEmail) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(emails).values(email);
-  return result[0].insertId;
+  const result = await db.insert(emails).values(email).returning({ id: emails.id });
+  return result[0].id;
 }
 
 export async function getEmailsByCampaign(campaignId: number) {

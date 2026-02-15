@@ -164,7 +164,7 @@ export const appRouter = router({
           imapPort: input.imapPort || providerConfig?.imap.port,
           imapUsername: input.imapUsername || input.email,
           imapPassword: encryptedImapPassword,
-          isActive: 1,
+          isActive: true,
           lastVerified: new Date(),
         });
         
@@ -202,7 +202,7 @@ export const appRouter = router({
         // Update verification status
         await db.updateEmailAccountStatus(
           input.accountId,
-          validation.valid ? 1 : 0,
+          validation.valid,
           validation.valid ? new Date() : undefined
         );
         
