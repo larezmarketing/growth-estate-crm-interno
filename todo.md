@@ -122,9 +122,12 @@
 **Proyecto listo para despliegue en Vercel, Render y Supabase** 🚀
 
 ## Fase 15: Despliegue en Vercel y Render
-- [ ] Desplegar frontend en Vercel usando MCP
-- [ ] Configurar variables de entorno en Vercel
-- [ ] Configurar backend en Render
-- [ ] Configurar variables de entorno en Render
+- [x] Desplegar frontend en Vercel usando MCP
+- [x] Configurar variables de entorno en Vercel (VITE_API_URL)
+- [x] Configurar backend en Render (JWT_SECRET: MARKETING12345)
+- [x] Configurar variables de entorno en Render (DATABASE_URL, JWT_SECRET)
+- [x] Crear archivo .vercel/project.json con configuración de build
+- [x] Crear archivo client/.env.production
+- [ ] Hacer redeploy en Vercel para aplicar cambios
 - [ ] Verificar despliegue exitoso en ambas plataformas
 - [ ] Probar conexión entre frontend y backend
