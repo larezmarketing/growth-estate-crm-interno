@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://your-render-backend-url.onrender.com/api/:path*"
+      "destination": "https://growth-estate-crm.onrender.com/api/:path*"
     }
   ]
 }

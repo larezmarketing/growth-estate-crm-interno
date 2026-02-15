@@ -84,3 +84,12 @@
 - [x] Actualizar README con instrucciones de despliegue
 - [x] Crear DEPLOYMENT.md con guía completa
 - [x] Exportar código a GitHub
+
+## Fase 14: Configuración Final con Credenciales de Producción
+- [x] Actualizar vercel.json con URL de Render
+- [x] Configurar drizzle.config.ts para PostgreSQL
+- [x] Crear SUPABASE_SETUP.md con credenciales y guía
+- [ ] Ejecutar migraciones en Supabase (requiere ejecución local)
+- [ ] Exportar código final a GitHub
+- [ ] Verificar despliegue en Vercel
+- [ ] Verificar despliegue en Render
