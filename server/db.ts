@@ -1,6 +1,23 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, 
+  users,
+  workspaces,
+  InsertWorkspace,
+  workspaceMembers,
+  InsertWorkspaceMember,
+  emailAccounts,
+  InsertEmailAccount,
+  knowledgeBase,
+  InsertKnowledgeBase,
+  knowledgeBaseFiles,
+  InsertKnowledgeBaseFile,
+  campaigns,
+  InsertCampaign,
+  emails,
+  InsertEmail
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +106,273 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Workspace queries
+export async function createWorkspace(workspace: InsertWorkspace) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(workspaces).values(workspace);
+  return result[0].insertId;
+}
+
+export async function getWorkspacesByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select({
+      workspace: workspaces,
+      member: workspaceMembers,
+    })
+    .from(workspaceMembers)
+    .innerJoin(workspaces, eq(workspaces.id, workspaceMembers.workspaceId))
+    .where(eq(workspaceMembers.userId, userId));
+  
+  return result.map(r => ({
+    ...r.workspace,
+    role: r.member.role,
+  }));
+}
+
+export async function getWorkspaceById(workspaceId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(workspaces).where(eq(workspaces.id, workspaceId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function addWorkspaceMember(member: InsertWorkspaceMember) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(workspaceMembers).values(member);
+}
+
+export async function getWorkspaceMembers(workspaceId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select({
+      member: workspaceMembers,
+      user: users,
+    })
+    .from(workspaceMembers)
+    .innerJoin(users, eq(users.id, workspaceMembers.userId))
+    .where(eq(workspaceMembers.workspaceId, workspaceId));
+  
+  return result.map(r => ({
+    ...r.member,
+    user: r.user,
+  }));
+}
+
+export async function getUserWorkspaceRole(userId: number, workspaceId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db
+    .select()
+    .from(workspaceMembers)
+    .where(
+      and(
+        eq(workspaceMembers.userId, userId),
+        eq(workspaceMembers.workspaceId, workspaceId)
+      )
+    )
+    .limit(1);
+  
+  return result.length > 0 ? result[0].role : null;
+}
+
+// Email account queries
+export async function createEmailAccount(account: InsertEmailAccount) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(emailAccounts).values(account);
+  return result[0].insertId;
+}
+
+export async function getEmailAccountsByWorkspace(workspaceId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select()
+    .from(emailAccounts)
+    .where(eq(emailAccounts.workspaceId, workspaceId));
+  
+  return result;
+}
+
+export async function getEmailAccountById(accountId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(emailAccounts)
+    .where(eq(emailAccounts.id, accountId))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateEmailAccountStatus(accountId: number, isActive: number, lastVerified?: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(emailAccounts)
+    .set({ isActive, lastVerified })
+    .where(eq(emailAccounts.id, accountId));
+}
+
+// Knowledge base queries
+export async function createKnowledgeBase(kb: InsertKnowledgeBase) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(knowledgeBase).values(kb);
+  return result[0].insertId;
+}
+
+export async function getKnowledgeBaseByWorkspace(workspaceId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(knowledgeBase)
+    .where(eq(knowledgeBase.workspaceId, workspaceId))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateKnowledgeBase(id: number, data: Partial<InsertKnowledgeBase>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(knowledgeBase)
+    .set(data)
+    .where(eq(knowledgeBase.id, id));
+}
+
+export async function addKnowledgeBaseFile(file: InsertKnowledgeBaseFile) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(knowledgeBaseFiles).values(file);
+  return result[0].insertId;
+}
+
+export async function getKnowledgeBaseFiles(knowledgeBaseId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select()
+    .from(knowledgeBaseFiles)
+    .where(eq(knowledgeBaseFiles.knowledgeBaseId, knowledgeBaseId));
+  
+  return result;
+}
+
+export async function deleteKnowledgeBaseFile(fileId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .delete(knowledgeBaseFiles)
+    .where(eq(knowledgeBaseFiles.id, fileId));
+}
+
+// Campaign queries
+export async function createCampaign(campaign: InsertCampaign) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(campaigns).values(campaign);
+  return result[0].insertId;
+}
+
+export async function getCampaignsByWorkspace(workspaceId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select()
+    .from(campaigns)
+    .where(eq(campaigns.workspaceId, workspaceId))
+    .orderBy(campaigns.createdAt);
+  
+  return result;
+}
+
+export async function getCampaignById(campaignId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(campaigns)
+    .where(eq(campaigns.id, campaignId))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateCampaign(id: number, data: Partial<InsertCampaign>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(campaigns)
+    .set(data)
+    .where(eq(campaigns.id, id));
+}
+
+// Email queries
+export async function createEmail(email: InsertEmail) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(emails).values(email);
+  return result[0].insertId;
+}
+
+export async function getEmailsByCampaign(campaignId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select()
+    .from(emails)
+    .where(eq(emails.campaignId, campaignId))
+    .orderBy(emails.sequenceNumber);
+  
+  return result;
+}
+
+export async function updateEmail(id: number, data: Partial<InsertEmail>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(emails)
+    .set(data)
+    .where(eq(emails.id, id));
+}
+
+export async function deleteEmail(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .delete(emails)
+    .where(eq(emails.id, id));
+}
