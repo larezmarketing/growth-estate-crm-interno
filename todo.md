@@ -136,3 +136,14 @@
 - [ ] Corregir configuración de outputDirectory en vercel.json
 - [ ] Ajustar buildCommand para que funcione correctamente
 - [ ] Hacer push y verificar build exitoso
+
+## Fase 17: Corrección de Root Directory en Render
+- [ ] Cambiar Root Directory de "service" a "." (raíz) en configuración de Render
+- [ ] Verificar que Dockerfile esté en la raíz del repositorio
+- [ ] Hacer redeploy manual en Render
+- [ ] Verificar que el backend se despliegue correctamente
+
+## Fase 18: Corrección de Dockerfile para Render
+- [ ] Corregir comando de instalación de pnpm en Dockerfile
+- [ ] Quitar flag --frozen-lockfile que causa error
+- [ ] Hacer push y verificar build exitoso en Render

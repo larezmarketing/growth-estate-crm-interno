@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Copy source code
 COPY . .
@@ -18,8 +18,8 @@ COPY . .
 # Build the application
 RUN pnpm build
 
-# Expose port
-EXPOSE 3000
+# Expose port (Render uses PORT env variable)
+EXPOSE ${PORT:-10000}
 
 # Start the server
 CMD ["pnpm", "start"]
