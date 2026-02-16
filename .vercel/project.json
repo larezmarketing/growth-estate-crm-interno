@@ -2,10 +2,6 @@
   "orgId": "team_vbdZwTJDNNw7oQ6ojvLUTdTi",
   "projectId": "prj_wyPMT7IY299YZjlwjoVhrt7XQE2X",
   "settings": {
-    "framework": "vite",
-    "buildCommand": "cd client && pnpm build",
-    "outputDirectory": "client/dist",
-    "installCommand": "pnpm install",
-    "devCommand": "pnpm dev"
+    "rootDirectory": "client"
   }
 }

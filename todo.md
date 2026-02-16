@@ -131,3 +131,8 @@
 - [ ] Hacer redeploy en Vercel para aplicar cambios
 - [ ] Verificar despliegue exitoso en ambas plataformas
 - [ ] Probar conexión entre frontend y backend
+
+## Fase 16: Corrección de Build en Vercel
+- [ ] Corregir configuración de outputDirectory en vercel.json
+- [ ] Ajustar buildCommand para que funcione correctamente
+- [ ] Hacer push y verificar build exitoso
